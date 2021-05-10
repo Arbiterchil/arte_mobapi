@@ -1,4 +1,5 @@
-import 'package:arte/api/heavy.dart';
+
+import 'package:arte/api/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,7 +24,7 @@ class SignInController extends GetxController{
           "password": password.value.text
         };
 
-        ApiHeavy().signIndynamic(data);
+        ApiServices.signInNow(data);
       }
 
 

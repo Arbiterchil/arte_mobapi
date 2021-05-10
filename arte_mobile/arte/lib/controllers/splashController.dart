@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:arte/elements/shared_prefs.dart';
 import 'package:arte/routes/names.dart';
 import 'package:get/get.dart';
 
@@ -19,6 +20,10 @@ class SplashController extends GetxController{
   }
 
   route() {
-    Get.toNamed(onBoard);
+    var checkToken = Sharedprefs.getToken();
+    var checkDoneViewOnboard = Sharedprefs.getDone();
+    if(checkToken != null) Get.offNamedUntil(homee, (route) => false);
+    else if(checkDoneViewOnboard != null) Get.offNamedUntil(signin, (route) => false); 
+    else Get.toNamed(onBoard);
   }
 }

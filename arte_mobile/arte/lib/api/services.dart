@@ -1,52 +1,103 @@
 
-
 import 'dart:convert';
 
 import 'package:arte/api/endpoints.dart';
-import 'package:arte/api/sign.dart';
 import 'package:arte/constants/color.dart';
 import 'package:arte/elements/shared_prefs.dart';
+import 'package:arte/models/posts.dart';
+import 'package:arte/models/upload_images.dart';
 import 'package:arte/routes/names.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+class ApiServices {
 
-class ApiHeavy{
+  static var client = http.Client();
 
 
-    signIndynamic(data){
-      
-      loaderUni();
-      ApiSign apiSign = ApiSign(ApiArte.signIn,data);
-      apiSign.postwithData().then((value) async{
-        var tokenview = json.decode(value.body);
+  static signInNow(data) async {
+    loaderUni();
+    var response = await client.post(Uri.parse(ApiArte.signIn),body: data,
+    headers: {
+      "Accepts": ContentType.accepts
+    }).timeout(Duration(minutes: 2));
+
+    if(response.statusCode == 200){
+       var tokenview = json.decode(response.body);
          print(tokenview['access_token']);
         var token = tokenview['access_token'];
          await Sharedprefs.usertoken(token.toString());
+         await Sharedprefs.setUsersDetails(json.encode(tokenview['user']));
         Get.back();
         Get.offAllNamed(homee);
-      }).catchError((onError){
-          Get.back();
+    }else{
+       Get.back();
           errorUni();
-      });
-
     }
 
-    signUpdynamic(data) async{
-       loaderUni();
-      ApiSign apiSign =ApiSign(ApiArte.signUp,data);
-      apiSign.postwithData().then((value){
-        var viewResult = json.decode(value.body);
+  }
+
+
+  static signUpNow(data) async {
+    loaderUni();
+   var response = await client.post(Uri.parse(ApiArte.signUp),body: data,
+    headers: {
+      "Accepts": ContentType.accepts
+    }).timeout(Duration(minutes: 2));
+
+    if(response.statusCode == 200){
+          var viewResult = json.decode(response.body);
         print(viewResult);
          Get.back();
             Get.offAllNamed(signin);
-      }).catchError((onError){
-      
-          Get.back();
+        }else{
+           Get.back();
           errorUni();
-      });
-    }
+        }
+
+  }
+
+static  getPost() async{
+    var response = await client.get(Uri.parse(ApiArte.getPostView));
+    if(response.statusCode == 200){
+      var data =  jsonDecode(response.body);
+     
+      Iterable list = data['data'];
+      //  getUploadImages(data['data'][0]['id']);
+      // print( list.map((e) => e).toList());
+      // List trial = list.map((e) => e['upload_images']).toList();
+      // print(trial.map((e) => UploadImage.fromJson(e)).toList());
+      return list.map((e) => Datum.fromJson(e)).toList();
+      // return postsFromJson(data);
+        
+    } else{
+      return null;
+    } 
+  }
+
   
-  errorUni(){
+static  getPostUpload() async{
+    var response = await client.get(Uri.parse(ApiArte.getPostView));
+    if(response.statusCode == 200){
+      var data =  jsonDecode(response.body);
+     
+      Iterable list = data['data'];
+      Iterable listp = list.map((e) => e[['upload_images']]).toList();
+      print(listp);
+      // print(List<dynamic>.from(list.map((e) => e).map((e) => e['upload_images'])).toList());
+      // return UploadImage.fromJson(darl);
+      // return list.map((e) => UploadImage.fromJson(e)).toList();
+      // print(list.map((e) => Datum.fromJson(e)).map((e) => e.uploadImages).toList());
+        
+    } else{
+      return null;
+    } 
+  }
+
+
+
+  
+ static errorUni(){
         Get.defaultDialog(
           backgroundColor: decent_white,
           barrierDismissible: false,
@@ -84,8 +135,7 @@ class ApiHeavy{
           ),
         );
     }
-
-    loaderUni(){
+  static loaderUni(){
      Get.dialog(
         Center(
         child: Container(
@@ -107,6 +157,5 @@ class ApiHeavy{
       barrierColor: colorless_other,
       );
     }
-
 
 }

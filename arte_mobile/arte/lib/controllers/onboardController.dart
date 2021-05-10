@@ -11,6 +11,7 @@ class OnboardController extends GetxController{
 bool get isLastPage => selectedPagexNumber.value == onBoardPages.length -1;
 var pageControll = PageController();
 
+
    forwardAct()
   {
     if(isLastPage) Get.offNamedUntil(signin, (route)=> false);

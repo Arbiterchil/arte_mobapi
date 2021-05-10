@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use App\Models\Upload;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
+        protected $fillable = [
         'user_author_id',
         'title',
         'subtitile',
@@ -19,6 +20,13 @@ class Post extends Model
         'hearts',
         'tags'
     ];
+
+    // protected $with = ['uploads'];
+
+    public function uploadImages(){
+        return $this->hasMany(Upload::class,'post_com_id','id');
+    }
+
 
 
 }

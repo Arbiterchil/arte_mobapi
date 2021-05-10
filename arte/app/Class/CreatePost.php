@@ -110,8 +110,17 @@ class CreatePost
 
 
     public function getPost(){
-        $post = Post::orderByDesc('created_at','desc')->get();
-        return response()->json($post);
+        // $post = Post::orderByDesc('created_at','desc')
+        // ->join('users','users.id','=','users')
+        // ->paginate(10);
+
+        $data = Post::with('uploadImages')
+        ->join('users','users.id','=','posts.user_author_id')
+        ->select('posts.*','users.name','users.email','users.image_profile')
+        ->orderByDesc('posts.created_at','desc')
+        ->simplePaginate(10);
+
+        return response()->json($data);
     }
 
     public function getUploadbyId($id){

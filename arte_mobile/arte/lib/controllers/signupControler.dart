@@ -1,5 +1,6 @@
 
-import 'package:arte/api/heavy.dart';
+
+import 'package:arte/api/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,7 +31,7 @@ class SignUpController extends GetxController{
         "category_id": "2"
       };
 
-    ApiHeavy().signUpdynamic(data);
+    ApiServices.signUpNow(data);
 
     }
 
